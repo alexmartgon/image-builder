@@ -3,11 +3,14 @@ podTemplate(label: 'docker',
         containerTemplate(
             name: 'docker', 
             image: 'docker:latest',
-            ttyEnabled: true,
+            ttyEnabled: false,
             envVars: [ 
                 secretEnvVar(key: "USERNAME", secretName: "docker-access-key", secretKey: "USERNAME"),
                 secretEnvVar(key: "PASSWORD", secretName: "docker-access-key", secretKey: "PASSWORD"),
-            ]
+            ],
+            yaml:
+                securityContext:
+                    allowPrivilegeEscalation: true
     )]) {
     node('docker') {
         // Checkout stage for pulling the git repository

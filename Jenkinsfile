@@ -5,10 +5,8 @@ podTemplate(
             name: 'kaniko', 
             image: 'bitnami/kaniko:1.23.2',
             ttyEnabled: false,
-            args: ["--context=dir:///kaniko",
-                    "--destination=alexmartgon/jenkins-reverse-dns-lookup:0.0.1",
-                    "--dockerfile=reverse-dns-lookup.Dockerfile"],
-            )
+            args: "--context=dir:///kaniko --destination=alexmartgon/jenkins-reverse-dns-lookup:0.0.1 --dockerfile=reverse-dns-lookup.Dockerfile"
+        )
     ],
     volumes: [secretVolume(secretName: 'docker-access-key', mountPath: '/kaniko/.docker')]
     ) {

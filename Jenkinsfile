@@ -1,14 +1,17 @@
-podTemplate(label: 'kaniko',
+podTemplate(
+    label: 'kaniko',
     containers: [
         containerTemplate(
             name: 'kaniko', 
             image: 'bitnami/kaniko:1.23.2',
-            ttyEnabled: true,
-            envVars: [ 
-                secretEnvVar(key: "USERNAME", secretName: "docker-access-key", secretKey: "USERNAME"),
-                secretEnvVar(key: "PASSWORD", secretName: "docker-access-key", secretKey: "PASSWORD"),
-            ],
-    )]) {
+            ttyEnabled: false,
+            args: ["--context=dir:///kaniko",
+                    "--destination=alexmartgon/jenkins-reverse-dns-lookup:0.0.1",
+                    "--dockerfile=reverse-dns-lookup.Dockerfile"],
+            )
+    ],
+    volumes: [secretVolume(secretName: 'docker-access-key', mountPath: '/kaniko/.docker')]
+    ) {
     node('kaniko') {
         // Checkout stage for pulling the git repository
         stage('Checkout') {
@@ -16,18 +19,10 @@ podTemplate(label: 'kaniko',
             checkout scm
         }
 
-        stage('Build') {
-            container('kaniko'){
-                sh '''
-                    #!/bin/bash
-
-                    pwd
-                    ls -la
-                    whoami
-                    env
-                '''
-            }
-        }
+        // stage('Build') {
+        //     container('kaniko'){
+        //     }
+        // }
     }
 }
 

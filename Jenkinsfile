@@ -1,28 +1,60 @@
-podTemplate(
-    label: 'kaniko',
+podTemplate(label: 'kaniko',
     containers: [
         containerTemplate(
             name: 'kaniko', 
             image: 'bitnami/kaniko:1.23.2',
-            ttyEnabled: false,
-            args: "--context=dir:///kaniko --destination=alexmartgon/jenkins-reverse-dns-lookup:0.0.1 --dockerfile=reverse-dns-lookup.Dockerfile"
-        )
-    ],
-    volumes: [secretVolume(secretName: 'docker-access-key', mountPath: '/kaniko/.docker')]
-    ) {
-    node('kaniko') {
-        // Checkout stage for pulling the git repository
-        stage('Checkout') {
-            echo 'Checking out SCM from Git Repo.'
-            checkout scm
-        }
+            ttyEnabled: true,
+            command: '')
+    ],)
+    {
+        node('kaniko'){
+            // Checkout stage for pulling the git repository
+            stage('Checkout') {
+                echo 'Checking out SCM from Git Repo.'
+                checkout scm
+            }
 
-        // stage('Build') {
-        //     container('kaniko'){
-        //     }
-        // }
+            stage('Build') {
+                container('kaniko'){
+                    sh '''
+                        pwd
+                        ls -la
+                    '''
+                }
+            }
+        }
     }
-}
+// podTemplate(label: 'kaniko',
+//     containers: [
+//         containerTemplate(
+//             name: 'kaniko', 
+//command
+//             image: 'bitnami/kaniko:1.23.2',
+//             ttyEnabled: false,
+//             args: ["--context=dir://",
+//                     "",
+//                     "--destination=alexmartgon/jenkins-reverse-dns-lookup:0.0.1",
+//                     "--dockerfile=reverse-dns-lookup.Dockerfile"],
+//             envVars: [ 
+//                 secretEnvVar(key: "HOSTED_ZONE_ID", secretName: "homelab-dns", secretKey: "HOSTED_ZONE_ID"),
+//                 secretEnvVar(key: "HOSTED_ZONE_RECORD", secretName: "homelab-dns", secretKey: "HOSTED_ZONE_RECORD")
+//             ])
+//     ],
+//     volumes: [secretVolume(secretName: 'docker-access-key', mountPath: '/kaniko/.docker')]
+//     ) {
+//     node('kaniko') {
+//         // Checkout stage for pulling the git repository
+//         stage('Checkout') {
+//             echo 'Checking out SCM from Git Repo.'
+//             checkout scm
+//         }
+
+//         // stage('Build') {
+//         //     container('kaniko'){
+//         //     }
+//         // }
+//     }
+// }
 
 
 

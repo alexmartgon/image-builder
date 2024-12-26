@@ -4,7 +4,8 @@ podTemplate(label: 'kaniko',
             name: 'kaniko', 
             image: 'bitnami/kaniko:1.23.2',
             ttyEnabled: true,
-            command: '')
+            command: 'sleep', 
+            args: '99d')
     ],)
     {
         node('kaniko'){

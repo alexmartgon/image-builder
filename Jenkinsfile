@@ -1,41 +1,14 @@
-podTemplate(label: 'kaniko',
-    containers: [
-        containerTemplate(
-            name: 'kaniko', 
-            image: 'bitnami/kaniko:1.23.2',
-            ttyEnabled: true,
-            command: 'sleep', 
-            args: '99d')
-    ],)
-    {
-        node('kaniko'){
-            // Checkout stage for pulling the git repository
-            stage('Checkout') {
-                echo 'Checking out SCM from Git Repo.'
-                checkout scm
-            }
-
-            stage('Build') {
-                container('kaniko'){
-                    sh '''
-                        pwd
-                        ls -la
-                    '''
-                }
-            }
-        }
-    }
 // podTemplate(label: 'kaniko',
 //     containers: [
 //         containerTemplate(
 //             name: 'kaniko', 
-//command
+// command
 //             image: 'bitnami/kaniko:1.23.2',
 //             ttyEnabled: false,
-//             args: ["--context=dir://",
-//                     "",
-//                     "--destination=alexmartgon/jenkins-reverse-dns-lookup:0.0.1",
-//                     "--dockerfile=reverse-dns-lookup.Dockerfile"],
+//             args: ["--dockerfile=reverse-dns-lookup.Dockerfile",
+//                 "--destination=alexmartgon/jenkins-reverse-dns-lookup:0.0.1",
+//                 "--context=git://github.com/alexmartgon/image-builder.git"
+//             ],
 //             envVars: [ 
 //                 secretEnvVar(key: "HOSTED_ZONE_ID", secretName: "homelab-dns", secretKey: "HOSTED_ZONE_ID"),
 //                 secretEnvVar(key: "HOSTED_ZONE_RECORD", secretName: "homelab-dns", secretKey: "HOSTED_ZONE_RECORD")
@@ -43,19 +16,46 @@ podTemplate(label: 'kaniko',
 //     ],
 //     volumes: [secretVolume(secretName: 'docker-access-key', mountPath: '/kaniko/.docker')]
 //     ) {
-//     node('kaniko') {
-//         // Checkout stage for pulling the git repository
-//         stage('Checkout') {
-//             echo 'Checking out SCM from Git Repo.'
-//             checkout scm
-//         }
+podTemplate(
+    yaml:'''
+        apiVersion: v1
+        kind: Pod
+        metadata:
+          name: kaniko
+          namespace: jenkins
+        spec:
+          containers:
+            - name: kaniko
+              image: bitnami/kaniko:1.23.2
+              args:
+              - "--dockerfile=reverse-dns-lookup.Dockerfile"
+              - "--context=git://github.com/alexmartgon/image-builder.git"
+              - "--destination=alexmartgon/jenkins-reverse-dns-lookup:latest"
+              volumeMounts:
+              - name: docker-secret
+                mountPath: /kaniko/.docker
+          restartPolicy: Never
+          volumes:
+            - name: docker-secret
+              secret:
+                secretName: reg-creds
+                items:
+                - key: .dockerconfigjson
+                  path: config.json
+    ''') {
+    node('kaniko') {
+        // Checkout stage for pulling the git repository
+        stage('Checkout') {
+            echo 'Checking out SCM from Git Repo.'
+            checkout scm
+        }
 
-//         // stage('Build') {
-//         //     container('kaniko'){
-//         //     }
-//         // }
-//     }
-// }
+        // stage('Build') {
+        //     container('kaniko'){
+        //     }
+        // }
+    }
+}
 
 
 

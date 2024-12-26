@@ -31,7 +31,7 @@ podTemplate(
               args:
               - "--dockerfile=reverse-dns-lookup.Dockerfile"
               - "--context=git://github.com/alexmartgon/image-builder.git"
-              - "--destination=alexmartgon/jenkins-reverse-dns-lookup:latest"
+              - "--destination=alexmartgon/jenkins-reverse-dns-lookup:0.0.1"
               volumeMounts:
               - name: docker-secret
                 mountPath: /kaniko/.docker
@@ -53,9 +53,7 @@ podTemplate(
 
         stage('Build') {
             container('kaniko'){
-                sh '''
-                    ls
-                '''
+
             }
         }
     }

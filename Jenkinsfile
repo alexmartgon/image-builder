@@ -51,10 +51,13 @@ podTemplate(
             checkout scm
         }
 
-        // stage('Build') {
-        //     container('kaniko'){
-        //     }
-        // }
+        stage('Build') {
+            container('kaniko'){
+                sh '''
+                    ls
+                '''
+            }
+        }
     }
 }
 

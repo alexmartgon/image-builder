@@ -7,7 +7,7 @@ ENV PYTHONUNBUFFERED=1 \
     # build-base && \
 RUN apk add --no-cache \
     python3 \
-    py3-pip && 
+    py3-pip
     
 WORKDIR /app
 RUN python3 -m venv /app/dns-pipeline 

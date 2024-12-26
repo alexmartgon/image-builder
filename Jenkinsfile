@@ -53,7 +53,7 @@ podTemplate(
 
         stage('Build') {
             container('kaniko'){
-
+                sleep(300)
             }
         }
     }

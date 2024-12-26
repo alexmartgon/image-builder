@@ -17,6 +17,7 @@
 //     volumes: [secretVolume(secretName: 'docker-access-key', mountPath: '/kaniko/.docker')]
 //     ) {
 podTemplate(
+    label: 'kaniko',
     yaml:'''
         apiVersion: v1
         kind: Pod
